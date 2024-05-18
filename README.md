@@ -22,21 +22,66 @@ Next, Apache web server logs representing “regular” activity for VSI were up
 
 - After successful upload, “Start Searching” was selected and the time range set to “All Time.”
 
-<b>Reports</b>
+------------<b>Reports</b>------------
 
 - HTTP Methods Report:
 
-Created a report showing a table of the different HTTP methods (GET, POST, HEAD, etc.).
+Create a report showing a table of the different HTTP methods (GET, POST, HEAD, etc.).
 
-`source="windows_server_logs.csv" | table signature signature_id | dedup signature`
+This will provide insight into the type of HTTP activity being requested against their web server.
 
-[1](Pictures/apache/1Method_Apache.png)
+`source="apache_logs.txt" | top method`
 
-Top 10 Referring Domains Report:
+![Method](Pictures/apache/1Method_Apache.png)
 
-Created a report showing the top 10 domains that refer to VSI’s website.
-Screenshot of the report was taken.
-HTTP Response Codes Report:
+- Top 10 Referring Domains Report:
 
-Created a report showing the count of each HTTP response code.
-Screenshot of the report was taken.
+Create a report showing the top 10 domains that refer to VSI’s website.
+
+This will assist VSI with identifying suspicious referrers.
+
+`source="apache_logs.txt" | top limit=10 referer_domain`
+
+![Referer](Pictures/apache/2Referer_domain_apache.png)
+
+- HTTP Response Codes Report:
+
+Creat a report showing the count of each HTTP response code.
+
+This will provide insight into any suspicious levels of HTTP responses.
+
+![Status](Pictures/apache/3Status_code_apache.png)
+
+------------<b>Alerts</b>------------
+
+- Non-US Activity Alert:
+
+Determine a baseline and threshold for hourly activity from any country besides the United States.
+
+Creat an alert that triggers an email to SOC@VSI-company.com when the threshold is reached.
+
+`source="apache_logs.txt" | iplocation clientip | where Country!="United States"`
+
+Analyzing the next picture
+
+![Threshold](Pictures/apache/4threshold_activity_by_location.png)
+
+Conclusion: Baseline for hourly activity is around 80 and the spike is 113 the threshold for hourly activity was set at 115
+
+![Alert](Pictures/apache/4HighNon-USActivity.png)
+
+- HTTP POST Method Alert:
+
+Determine a baseline and threshold for the hourly count of the HTTP POST method.
+
+Create an alert that triggers an email to SOC@VSI-company.com when the threshold is reached.
+
+`source="apache_logs.txt" method=POST`
+
+Analyzing the next picture
+
+![Threshold](Pictures/apache/5threshold_activity_by_POST.png)
+
+Conclusion: Baseline for hourly activity is around 3 and the spike is 7 the threshold for hourly activity was set greater than 7
+
+  ![Alert](Pictures/apache/5HTTPPOSTCount.png)
