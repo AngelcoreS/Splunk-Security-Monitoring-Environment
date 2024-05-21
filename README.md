@@ -22,7 +22,11 @@ Next, Apache web server logs representing “regular” activity for VSI were up
 
 - After successful upload, “Start Searching” was selected and the time range set to “All Time.”
 
-------------<b>Reports</b>------------
+</br>
+
+<b>------------------Reports------------------</b>
+
+</br>
 
 - HTTP Methods Report:
 
@@ -52,7 +56,11 @@ This will provide insight into any suspicious levels of HTTP responses.
 
 ![Status](Pictures/apache/3Status_code_apache.png)
 
-------------<b>Alerts</b>------------
+</br>
+
+<b>------------------Alerts------------------</b>
+
+</br>
 
 - Non-US Activity Alert:
 
@@ -85,3 +93,54 @@ Analyzing the next picture
 Conclusion: Baseline for hourly activity is around 3 and the spike is 7 the threshold for hourly activity was set greater than 7
 
   ![Alert](Pictures/apache/5HTTPPOSTCount.png)
+
+</br>
+
+  <b>------------------Visualizations and Dashboards------------------</b>
+
+</br>
+
+- Line Chart of HTTP Methods Over Time:
+
+Create a line chart displaying the different HTTP method field values over time, using timechart span=1h count by method.
+
+`source="apache_logs.txt" | timechart span=1h count by method`
+
+![linechart](Pictures/apache/7Chart_Method_apache.png)
+
+- Geographical Map of Client IPs:
+
+Create a geographical map showing the location based on the clientip field.
+
+`source="apache_logs.txt" | iplocation clientip | geostats count`
+
+![map](Pictures/apache/8Chart_Map_clientip.png)
+
+- Number of Different URIs Visualization:
+
+Create a visualization displaying the number of different URIs.
+
+`source="apache_logs.txt" | top limit=10 uri`
+
+![URI](Pictures/apache/9URI_Apache.png)
+
+- Top 10 Countries Visualization:
+
+Create a visualization displaying the count of the top 10 countries appearing in the log.
+
+`source="apache_logs.txt" | iplocation clientip | top limit=10 Country`
+
+![Countries](Pictures/apache/10Chart_Countries_apache.png)
+
+- User Agents Count Visualization:
+
+Create a visualization illustrating the count of different user agents.
+
+`source="apache_logs.txt" | top useragent`
+
+![useragent](Pictures/apache/11useragent_apache.png)
+
+- Single-Value Visualization:
+
+Add a single-value visualization analyzing a single data point, such as a radial gauge or marker gauge.
+
