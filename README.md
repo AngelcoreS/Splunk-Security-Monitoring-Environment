@@ -141,6 +141,12 @@ Create a visualization illustrating the count of different user agents.
 ![useragent](Pictures/apache/11useragent_apache.png)
 
 - Single-Value Visualization:
-
+  
 Add a single-value visualization analyzing a single data point, such as a radial gauge or marker gauge.
+
+`source="apache_logs.txt" status=200  | timechart span=1h count by status`
+
+![radialgauge](Pictures/apache/12status_apache.png)
+
+<b>Note: I wanted to create a real-time visualization. However, since there have been no incoming logs in the last hour, it shows 0. </b>
 
