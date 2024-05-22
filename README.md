@@ -2,6 +2,12 @@
 
 I played the role of an SOC Analyst at a small company called Virtual Space Industries (VSI), which designs virtual-reality programs for businesses. The VSI products that you have been tasked with monitoring include: An Apache web server, which hosts the administrative webpage. A Windows operating system, which runs many of VSI’s back-end operations
 
+- VSI recently experienced several cyberattacks, likely from their adversary JobeCorp.
+
+- Fortunately, your SOC team had set up several monitoring solutions to help VSI quickly identify what was attacked.
+
+- These monitoring solutions will also help VSI create mitigation strategies to protect the organization.
+
 Logs provided:
 
 - <b> Apache Server Logs </b>
@@ -24,7 +30,7 @@ Next, Apache web server logs representing “regular” activity for VSI were up
 
 </br>
 
-<b>------------------Reports------------------</b>
+<b><h3>------------------Reports------------------</h3></b>
 
 </br>
 
@@ -58,7 +64,7 @@ This will provide insight into any suspicious levels of HTTP responses.
 
 </br>
 
-<b>------------------Alerts------------------</b>
+<b><h3>------------------Alerts------------------</h3></b>
 
 </br>
 
@@ -96,7 +102,7 @@ Conclusion: Baseline for hourly activity is around 3 and the spike is 7 the thre
 
 </br>
 
-  <b>------------------Visualizations and Dashboards------------------</b>
+  <b><h3>------------------Visualizations and Dashboards------------------</h3></b>
 
 </br>
 
@@ -150,3 +156,198 @@ Add a single-value visualization analyzing a single data point, such as a radial
 
 <b>Note: I wanted to create a real-time visualization. However, since there have been no incoming logs in the last hour, it shows 0. </b>
 
+</br>
+
+- <b>Dashboard</b>
+
+![dashboard](Pictures/apache/DASHbeforeattack.png)
+
+<h2>Load and Analyze Apache Attack Logs</h2>
+
+- Access the Reports tab and select Yours to view the reports created from Part 1.
+
+- Select the report that analyzes the different HTTP methods.
+
+- Select Edit > Open in Search.
+
+- Take note of the percent/count of the various methods.
+
+- Change the source from: source="apache_logs.txt" to source="apache_attack_logs.txt".
+
+- Select Save.
+
+  <b><h3>------------------Reports------------------</h3></b>
+
+- <b>Before Attack</b>
+  
+![beforeapam](Pictures/apache/1Method_Apache.png)
+  
+- <b>After Attack</b>
+
+![afterapam](Pictures/apacheattack/method_apache.png)
+
+- Did you detect any suspicious changes in HTTP methods? If so, which one?
+
+`Yes, GET decrease from 98.5% to 70.2% and POST increase from 1% to 29%`
+
+- What is that method used for?
+   
+`POST Method is used to send data from the client to a server to create/update a resource`
+
+- <b>Before Attack</b>
+
+![beforeaparef](Pictures/apache/2Referer_domain_apache.png)
+
+- <b>After Attack</b>
+
+![beforeaparef](Pictures/apacheattack/Referer_domain.png)
+
+- Did you detect any suspicious changes in referrer domains?
+
+`We have observed a similar percentage of traffic from semicomplete.com and its sub-domain. We need to analyze this trend more thoroughly to draw accurate conclusions`
+
+- <b>Before Attack</b>
+
+![beforeapasta](Pictures/apache/3Status_code_apache.png)
+
+- <b>After Attack</b>
+
+![afterapasta](Pictures/apacheattack/Status_code_attack.png)
+
+Report Analysis for HTTP Response Codes
+
+-Did you detect any suspicious changes in HTTP response codes? 
+
+`Yes, 200 decrease from 91% to 83% and the most suspicious change was 404 response code increasing from 2% to 15%`
+
+<b><h3>------------------Alerts------------------</h3></b>
+
+- <b>Before Attack</b>
+
+![beforeapanous]()
+
+- <b>After Attack</b>
+
+![afterapanous](Pictures/apacheattack/Non-US.png)
+
+- Did you detect a suspicious volume of international activity?
+
+`Yes, High volume of activity was detected from Ukraine `
+
+- If so, what was the count of the hour(s) it occurred in?
+
+`International activity had 937 events at 8:00 pm on 03/25/20 and 864 events was from Ukraine`
+
+- Would your alert be triggered for this activity?
+
+`Our threshold for Non-US activity more than 180 was correct and our alert would have been triggered at 8:00 pm`
+
+- After reviewing, would you change the threshold that you previously selected?
+
+`It’s not necessary to change the threshold`
+
+- <b>Before Attack</b>
+
+![beforeapahttp]()
+
+- <b>After Attack</b>
+
+![afterapahttp]()
+
+- Did you detect any suspicious volume of HTTP POST activity?
+
+`Yes, we detected a high volume of HTTP POST activity`
+
+- If so, what was the count of the hour(s) it occurred in?
+
+`POST activity has a total count of 1296 at 8:00 pm`
+
+- When did it occur?
+
+`At 8:00 p.m. on Wednesday, March 25th, 2020`
+
+- After reviewing, would you change the threshold that you previously selected?  
+
+`I would not initially change the threshold, our alert with more than 15 events was correct, and it would have been triggered at 8:00 pm`
+
+<b><h3>------------------Dashboard Setup------------------</h3></b>
+
+- Access the Apache Web Server Monitoring dashboard.
+
+- Select “Edit.”
+- For each panel that you created, access the panel and complete the following steps:
+- Select “Edit Search.”
+- Change the source from source="apache_logs.txt" to source="apache_attack_logs.txt".
+- Select “Apply.”
+- Save the whole dashboard.
+- Change the time on the whole dashboard to “All Time.”
+
+- <b>Before Attack</b>
+
+![beforeapadash](Pictures/apache/DASHbeforeattack.png)
+
+- <b>After Attack</b>
+
+![afterapadash](Pictures/apacheattack/DASHattack.png)
+
+<b><h3>Dashboard Analysis for Time Chart of HTTP Methods</h3></b>
+
+- Which method seems to be used in the attack?
+
+`GET and POST methods seemed to be used in the attack`
+
+- At what times did the attack start and stop?
+
+`GET attack started on 3/25/20 at 6:05:00.00 PM and stopped at 6:05:59.000 PM`
+
+`POST attack started on 3/25/20 at 8:05:00.0 PM and stopped at 8:05:59.000 PM` 
+
+- What is the peak count of the top method during the attack?
+    
+`GET peak count was 729`
+`POST peak count was 1296`
+
+<b><h3>Dashboard Analysis for Cluster Map</h3></b>
+
+- Does anything stand out as suspicious?
+
+`There was suspicious activity in Ukraine`
+
+- Which new location (city, country) on the map has a high volume of activity? (Hint: Zoom in on the map.)
+
+`City, Country = Kiev, Ukraine `
+`City, Country = Kharkiv, Ukraine `
+
+- What is the count of that city?
+    
+`Kiev (439) and Kharkiv (432)`
+
+<b><h3>Dashboard Analysis for URI Data</h3></b>
+
+- Does anything stand out as suspicious?
+
+`/files/logstash/logstash-1.3.2-monolithic.jar from 0 to 14% `
+`/VSI_Account_logon.php had an increase from 8% to 29%`
+
+- What URI is hit the most?
+
+` /VSI_Account_logon.php  with 1296 at 8:00 PM`
+
+- Based on the URI being accessed, what could the attacker potentially be doing?
+
+`Based on the URI that has been attacked “/VSI_Account_logon.php” the attacker could potentially be trying a brute force attack and “/files/logstash/logstash-1.3.2-monolithic.jar” probability reconnaissance or DDoS attack due 404 code response that indicate the server cannot find the requested resource.`
+
+<b><h3>Deep Analyze of Referrer Domains</h3></b>
+
+<b>We have observed a similar percentage of traffic from semicomplete.com and its sub-domain.</b>
+
+![nospike](Pictures/apacheattack/nospike.png)
+![noospike](Pictures/apacheattack/no-spikles.png)
+
+<b>Explanation:</b> As you can see, there is no evident change or spike after the attack. This is because the majority of the traffic is coming from “-”. At 6 PM, the majority status count was 404 with 624 events, while at 8 PM, the majority status was 200 with 1,415 events.
+
+![spike](Pictures/apacheattack/spike.png)
+![200](Pictures/apacheattack/200.png)
+![404](Pictures/apacheattack/404.png)
+
+<b>With these pictures, we can assume that there was an error in the logs and the traffic is really coming from "semicomplete" instead of "-".</b>
