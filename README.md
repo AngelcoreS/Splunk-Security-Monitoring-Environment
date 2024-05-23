@@ -200,7 +200,7 @@ Add a single-value visualization analyzing a single data point, such as a radial
 
 - <b>After Attack</b>
 
-![beforeaparef](Pictures/apacheattack/Referer_domain.png)
+![beforeaparef](Pictures/apacheattack/Referer_domain1.png)
 
 - Did you detect any suspicious changes in referrer domains?
 
