@@ -212,7 +212,7 @@ Add a single-value visualization analyzing a single data point, such as a radial
 
 - <b>After Attack</b>
 
-![afterapasta](Pictures/apacheattack/Status_code_attack.png)
+![afterapasta](Pictures/apacheattack/Status_code_attack1.png)
 
 Report Analysis for HTTP Response Codes
 
