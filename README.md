@@ -72,7 +72,7 @@ This will provide insight into any suspicious levels of HTTP responses.
 
 Determine a baseline and threshold for hourly activity from any country besides the United States.
 
-Creat an alert that triggers an email to SOC@VSI-company.com when the threshold is reached.
+Create an alert that triggers an email to SOC@VSI-company.com when the threshold is reached.
 
 `source="apache_logs.txt" | iplocation clientip | where Country!="United States"`
 
@@ -160,17 +160,17 @@ Add a single-value visualization analyzing a single data point, such as a radial
 
 - <b>Dashboard</b>
 
+</br>
+
 ![dashboard](Pictures/apache/DASHbeforeattack.png)
 
 <h2>Load and Analyze Apache Attack Logs</h2>
 
 - Access the Reports tab and select Yours to view the reports created from Part 1.
 
-- Select the report that analyzes the different HTTP methods.
-
 - Select Edit > Open in Search.
 
-- Take note of the percent/count of the various methods.
+- Take note of the percent/count.
 
 - Change the source from: source="apache_logs.txt" to source="apache_attack_logs.txt".
 
@@ -351,3 +351,359 @@ Report Analysis for HTTP Response Codes
 ![404](Pictures/apacheattack/404.png)
 
 <b>With these pictures, we can assume that there was an error in the logs and the traffic is really coming from "semicomplete" instead of "-".</b>
+
+<h2>Load and Analyze Windows Servers Logs</h2>
+
+- Select the “Add Data” option within Splunk. Select the “Upload” option. Select the indows_server_logs.csv.
+
+- After successful upload, “Start Searching” was selected and the time range set to “All Time.”
+  
+</br>
+
+<b><h3>------------------Reports------------------</h3></b>
+
+</br>
+- Signatures and Signature IDs Report:
+
+Create a report with a table of signatures and associated signature IDs. Remove duplicate values in the SPL search to ensure a clean report.
+
+`source="windows_server_logs.csv" | table signature signature_id | dedup signature`
+
+![tablesig](Pictures/windows%20server/1Table_signature_and_ID.png)
+
+- Severity Levels Report:
+
+Create a report that displays the severity levels, along with the count and percentage of each.
+
+`source="windows_server_logs.csv" | top severity`
+
+![severity](Pictures/windows%20server/2Severity_lvl_%25.png)
+
+- Success vs. Failure Report:
+
+Create a report comparing the success and failure of Windows activities, using the status field for information.
+
+`source="windows_server_logs.csv" | top status`
+
+![status](Pictures/windows%20server/3SucessVsFailure_Windows.png)
+
+
+</br>
+
+<b><h3>------------------Alerts------------------</h3></b>
+
+</br>
+
+- Failed Windows Activity Alert:
+
+Determine a baseline and threshold for the hourly level of failed Windows activity.
+
+Create an alert that triggers an email to SOC@VSI-company.com when the threshold is reached.
+
+`source="windows_server_logs.cvs" status="failure"`
+
+Analyzing the next picture
+
+![Threshold](Pictures/windows%20server/Threshold_failure_lvl.png)
+
+Conclusion: Baseline for hourly activity is around 9, the threshold for hourly activity was set at 15
+
+![Alert](Pictures/windows%20server/4Alert_failed_windows.png)
+
+- Successful Login Alert:
+
+Determine a baseline and threshold for the hourly count of the signature “an account was successfully logged on.”
+
+Create an alert based on the corresponding signature ID that triggers an email to SOC@VSI-company.com when the threshold is reached.
+
+`source="windows_server_logs.csv" signature="An account was successfully logged on"`
+
+- Baseline for hourly success of logged on accounts: 12.
+- Threshold for hourly success of logged on accounts: 30.
+
+![Alert](Pictures/windows%20server/5alert_for_successful_log_ons_720.png)
+
+- User Account Deletion Alert:
+
+Determine a baseline and threshold for the hourly count of the signature “a user account was deleted.”
+
+Create an alert based on the corresponding signature ID that triggers an email to SOC@VSI-company.com when the threshold is reached.
+
+`source="windows_server_logs.csv" signature_id=4726`
+
+Analyzing the next picture
+
+![Threshold](Pictures/windows%20server/Threshold_user_deleted.png)
+
+Conclusion: Baseline for hourly activity is around 17, the threshold for hourly activity was set at 20
+
+![Alert](Pictures/windows%20server/6Alert_Deleted_User.png)
+
+</br>
+
+  <b><h3>------------------Visualizations and Dashboards------------------</h3></b>
+
+</br>
+
+- Line Chart of Signatures Over Time:
+
+Create a line chart displaying the different signature field values over time, using timechart span=1h count by signature.
+
+`source="windows_server_logs.csv" | timechart span=1h count by signature`
+
+![linecharts](Pictures/windows%20server/7Chart_Signature.png)
+
+- Line Chart of Users Over Time:
+
+Create a line chart displaying the different user field values over time.
+
+`source="windows_server_logs.csv" | timechart span=1h count by user`
+
+![linechartu](Pictures/windows server/8Chart_User.png)
+
+- Count of Different Signatures Visualization:
+
+Create a visualization illustrating the count of different signatures.
+
+`source="windows_server_logs.csv" | top signature`
+
+![barcharts](Pictures/windows%20server/9Bar_count_signature.png)
+
+- Count of Different Users Visualization:
+
+Create a visualization illustrating the count of different users.
+
+`source="windows_server_logs.csv" | top user`
+
+![barchartu](Pictures/windows%20server/10Bar_count_user.png)
+
+- Single-Value Visualization:
+
+Add a single-value visualization analyzing a single data point, such as a radial gauge or marker gauge.
+
+`source="windows_server_logs.csv" severity=high | timechart span=1h count
+
+![radialgau](Pictures/windows server/11radialgauge_Highseverity.png)
+
+<b>Note: I wanted to create a real-time visualization. However, since there have been no incoming logs in the last hour, it shows 0. </b>
+
+<h2>Load and Analyze Windows Servers Attack Logs</h2>
+
+
+- Access the Reports tab and select Yours to view the reports created from Part 1.
+
+- Select Edit > Open in Search.
+
+- Take note of the percent/count.
+
+- Change the source from: source="windows_server_logs.csv" to source="windows_server_attack_logs.csv"
+
+- Select Save.
+
+  <b><h3>------------------Reports------------------</h3></b>
+
+- <b>Before Attack</b>
+  
+![beforewi](Pictures/windows%20server/2Severity_lvl_%.png)
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Did you detect any suspicious changes in severity?
+
+`Yes, we detected a significantly increase on high severity from 7% to 20%`
+
+- <b>Before Attack</b>
+  
+![beforewi](Pictures/windows%20server/3SucessVsFailure_Windows.png)
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Did you detect any suspicious changes in failed activities?
+
+`No, there are no noticeable changes in this report on failed activities, from 3% to 1.6%`
+
+
+</br>
+
+<b><h3>------------------Alerts------------------</h3></b>
+
+</br>
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Did you detect a suspicious volume of failed activity?
+
+`Yes, there are a suspicious volume of failed activity at specific time`
+
+- If so, what was the count of events in the hour(s) it occurred?
+
+`35 events during one hour`
+
+- When did it occur?
+
+`8:00 AM on Wednesday, 03/25/20 specifically 8:28 AM until 8:40 AM`
+
+- Would your alert be triggered for this activity?
+
+`Yes, our threshold of Failed Windows Activity more than 15 was correct and our alert would have been triggered at 8:00 am`
+
+- After reviewing, would you change your threshold from what you previously selected?
+
+`No changes is needed`
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Did you detect a suspicious volume of successful logins?
+
+`Yes, we detected an increase of successful logins`
+
+- If so, what was the count of events in the hour(s) it occurred?
+
+`196 events at 11 AM and 77 events at 12PM`
+
+- Who is the primary user logging in?
+
+`User_j is the primary user logging in both events with a count of 271 (99%) in a span of 2 hours (11AM-1PM).`
+
+- When did it occur?
+
+`Wed on 03/25/20 11AM - 1PM specifically at 11:04 AM until 12:26 PM `
+
+- Would your alert be triggered for this activity?
+
+`Yes, the alert is within the trigger threshold of 30 per hour`
+
+- After reviewing, would you change your threshold from what you previously selected?
+
+`It’s not necessary to change the threshold`
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Did you detect a suspicious volume of deleted accounts?  
+   
+`No, there were no signs of suspicious volume of deleted accounts, it appears to remain inside normal ranges`
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Does anything stand out as suspicious?
+
+`Yes, we detected a high count of “An attempt was made to reset an accounts password” and “A user account was locked out”`
+
+- What signatures stand out?
+
+`“An attempt was made to reset an accounts password” with 2128 events in total and majority from 9 AM to 11AM`
+
+`“A user account was locked out” with 1811 events in total and majority from 1 AM to 3 AM`
+
+- What time did it begin and stop for each signature?
+
+`Wed on 03/25/20:`
+
+`“An attempt was made to reset an accounts password” started been suspicious at 9:13 AM and stopped at 10:54 AM`
+
+`“A user account was locked out” started been suspicious at 1:50 AM and stopped at 2:36 AM`
+
+- What is the peak count of the different signatures?
+
+`“An attempt was made to reset an accounts password” with 1258 events`
+
+`“A user account was locked out” with 896 events`
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Does anything stand out as suspicious?
+
+`High and suspicious activity from user_k and user_a`
+
+- Which users stand out?
+
+`User_k with 2118 events in total and majority from 9AM to 11AM`
+
+`User_a with 1878 events in total and majority from 1AM to 3AM`
+
+- What time did it begin and stop for each user?
+
+`Wed on 03/25/20:`
+
+`user_k: started been suspicious at 9:16 AM and stopped at 10:54 AM`
+
+`user_a: started been suspicious at 1:49 AM and stopped at 2:38 AM`
+
+- What is the peak count of the different users?
+
+`user_k with 1256 events`
+
+`user_a with 984 events`
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Does anything stand out as suspicious?
+
+`There was suspicious activity at 1AM to 3AM and then 9AM to 11AM on Wed 03/25/20`
+
+- Do the results match your findings in your time chart for signatures?    
+
+`Yes the results were so similar and we can conclude that user_a is the cause of “A user account was locked out” and user_k is the cause of “An attempt was made to reset an accounts password”`
+
+- <b>Before Attack</b>
+  
+![beforewi]()
+  
+- <b>After Attack</b>
+
+![afterwi]()
+
+- Does anything stand out as suspicious?
+
+`There was suspicious activity at 1AM to 3AM and then 9AM to 11AM on Wed 03/25/20`
+
+- Do the results match your findings in your time chart for users?
+
+`Yes the results were so similar and same conclusion signatures: “A user account was locked out” was made for user_a and “An attempt was made to reset an accounts password” was made for user_k`
+
+- What are the advantages and disadvantages of using this report, compared to the other user panels that you created?
+
+`Statistical charts are useful for displaying counts and percentages and are easy to set limits for display. A disadvantage is that they show the total data over the timeline, while the panels provide a more specific perspective on how the data is changing over time.`
+
+
+
