@@ -701,6 +701,14 @@ Add a single-value visualization analyzing a single data point, such as a radial
 
 `Yes the results were so similar and same conclusion signatures: “A user account was locked out” was made for user_a and “An attempt was made to reset an accounts password” was made for user_k`
 
+- <b>Before Attack</b>
+  
+![beforewi](Pictures/windows%20server/DashboardWindowsbeforeattack.png)
+  
+- <b>After Attack</b>
+
+![afterwi](Pictures/windows%20server/DashboardWindowsAttack.png)
+
 - What are the advantages and disadvantages of using this report, compared to the other user panels that you created?
 
 `Statistical charts are useful for displaying counts and percentages and are easy to set limits for display. A disadvantage is that they show the total data over the timeline, while the panels provide a more specific perspective on how the data is changing over time.`
