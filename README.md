@@ -298,7 +298,7 @@ Add a single-value visualization analyzing a single data point, such as a radial
 
 `source="windows_server_logs.csv" severity=high | timechart span=1h count
 
-![radialgau](Pictures/windows server/11radialgauge_Highseverity.png)
+![radialgau](Pictures/windows%20server/11radialgauge_Highseverity.png)
 
 <b>Note: I wanted to create a real-time visualization. However, since there have been no incoming logs in the last hour, it shows 0. </b>
 
